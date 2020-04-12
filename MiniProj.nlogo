@@ -1,5 +1,7 @@
 breed[redturtles redturtle]
 breed[blueturtles blueturtle]
+turtles-own [self-interest potential-gain-x potential-gain-y]
+patches-own [cost-function-x cost-function-y]
 
 to setup
   clear-all
@@ -7,21 +9,58 @@ to setup
   create-redturtles round (0.5 * 20)
   [ set color red
     setxy random-xcor random-ycor
+    set self-interest 0
+    set potential-gain-x 0
+    set potential-gain-y 0
+
   ]
   create-blueturtles round (0.5 * 20)
   [ set color blue
     setxy random-xcor random-ycor
+    set self-interest 0
+    set potential-gain-x 0
+    set potential-gain-y 0
   ]
+  let random-offset-x (17 - random 35)
+    let random-offset-y (17 - random 35)
+  ask patches [ 
+    set cost-function-x 100 - abs( pxcor - random-offset-x)  
+    set cost-function-y 100 - abs( pycor - random-offset-y)  
+  ]
+
 end
+
+to go
+  ask turtles [
+    let empty-patches neighbors with [not any? turtles-here]
+    if any? empty-patches
+      [ let target one-of empty-patches
+        face target
+        set potential-gain-x[cost-function-x] of target
+        set potential-gain-y[cost-function-y] of target
+        ifelse potential-gain-x > self-interest [
+          move-to target
+          set self-interest potential-gain-x
+        ]
+        [ if potential-gain-y > self-interest [ 
+          move-to target
+          set self-interest potential-gain-y
+          ]
+        ]
+      ]
+  ]
+  tick
+end
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-647
-448
+639
+439
 -1
 -1
-13.0
+13
 1
 10
 1
@@ -39,7 +78,7 @@ GRAPHICS-WINDOW
 0
 1
 ticks
-30.0
+30
 
 BUTTON
 12
@@ -58,6 +97,22 @@ NIL
 NIL
 1
 
+BUTTON
+20
+90
+200
+120
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+0
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -400,22 +455,22 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.1
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 default
-0.0
--0.2 0 0.0 1.0
-0.0 1 1.0 0.0
-0.2 0 0.0 1.0
+0
+-0.2 0 0 1
+0 1 1 0
+0.2 0 0 1
 link direction
 true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+
 @#$#@#$#@
