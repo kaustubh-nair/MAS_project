@@ -22,11 +22,11 @@ to setup
     set potential_gain_y 0
   ]
 
-  let random_offset_x random 17
-  let random_offset_y random 17
+  let random_offset_x (max-pxcor - random (max-pxcor * 2 ))
+  let random_offset_y (max-pycor - random (max-pxcor * 2 ))
 
-  let random_offset_blue random 17
-  let random_offset_red random 17
+  let random_offset_blue (max-pxcor - random (max-pxcor * 2 ))
+  let random_offset_red (max-pxcor - random (max-pxcor * 2 ))
 
   if random_offset_blue = random_offset_red
   [ set random_offset_blue round(random_offset_blue * 0.5)]
@@ -110,11 +110,11 @@ end
 GRAPHICS-WINDOW
 478
 10
-915
-448
+907
+439
 -1
 -1
-13.0
+13
 1
 10
 1
@@ -132,7 +132,7 @@ GRAPHICS-WINDOW
 0
 1
 ticks
-30.0
+30
 
 BUTTON
 16
@@ -152,27 +152,10 @@ NIL
 1
 
 BUTTON
-151
-24
-255
-57
-NIL
-go_task_1\n
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-263
 25
-367
-58
+80
+129
+113
 NIL
 go_task_1\n
 T
@@ -186,10 +169,10 @@ NIL
 1
 
 BUTTON
-31
-88
+30
 135
-121
+134
+168
 NIL
 go_task_2\n
 T
@@ -201,7 +184,6 @@ NIL
 NIL
 NIL
 1
-
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -544,22 +526,22 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.1
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 default
-0.0
--0.2 0 0.0 1.0
-0.0 1 1.0 0.0
-0.2 0 0.0 1.0
+0
+-0.2 0 0 1
+0 1 1 0
+0.2 0 0 1
 link direction
 true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+
 @#$#@#$#@
