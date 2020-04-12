@@ -1,7 +1,7 @@
 breed[redturtles redturtle]
 breed[blueturtles blueturtle]
 turtles-own [self_interest potential_gain_x potential_gain_y]
-patches-own [cost_function_x cost_function_y cost_function_x_blue cost_function_x_red]
+patches-own [cost_function_x cost_function_y cost_function_blue cost_function_red]
 
 to setup
   clear-all
@@ -25,15 +25,29 @@ to setup
   let random_offset_x random 17
   let random_offset_y random 17
 
-  let random_offset_x_blue random 17
-  let random_offset_x_red random 17
+  let random_offset_blue random 17
+  let random_offset_red random 17
+
+  if random_offset_blue = random_offset_red
+  [ set random_offset_blue round(random_offset_blue * 0.5)]
+
+
+  let choice random 2
 
   ask patches [
     set cost_function_x 100 - abs( pxcor - random_offset_x)
     set cost_function_y 100 - abs( pycor - random_offset_y)
 
-    set cost_function_x_blue 100 - abs( pxcor - random_offset_x_blue)
-    set cost_function_x_red 100 - abs( pxcor - random_offset_x_red)
+
+    (ifelse
+      choice = 0 [
+        set cost_function_blue 100 - abs( pxcor - random_offset_blue)
+        set cost_function_red 100 - abs( pxcor - random_offset_red)
+      ]
+      [
+        set cost_function_blue 100 - abs( pycor - random_offset_blue)
+        set cost_function_red 100 - abs( pycor - random_offset_red)
+      ])
   ]
 
 end
@@ -68,7 +82,7 @@ to go_task_2
     if any? empty-patches
       [ let target one-of empty-patches
         face target
-        set potential_gain_x[cost_function_x_red] of target
+        set potential_gain_x[cost_function_red] of target
         if potential_gain_x > self_interest
         [
           move-to target
@@ -81,7 +95,7 @@ to go_task_2
     if any? empty-patches
       [ let target one-of empty-patches
         face target
-        set potential_gain_x[cost_function_x_blue] of target
+        set potential_gain_x[cost_function_blue] of target
         if potential_gain_x > self_interest
         [
           move-to target
