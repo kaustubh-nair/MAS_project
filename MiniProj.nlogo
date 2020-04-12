@@ -1,7 +1,7 @@
 breed[redturtles redturtle]
 breed[blueturtles blueturtle]
-turtles-own [self-interest potential-gain-x potential-gain-y]
-patches-own [cost-function-x cost-function-y]
+turtles-own [self_interest potential_gain_x potential_gain_y]
+patches-own [cost_function_x cost_function_y cost_function_x_blue cost_function_x_red]
 
 to setup
   clear-all
@@ -9,42 +9,50 @@ to setup
   create-redturtles round (0.5 * 20)
   [ set color red
     setxy random-xcor random-ycor
-    set self-interest 0
-    set potential-gain-x 0
-    set potential-gain-y 0
+    set self_interest 0
+    set potential_gain_x 0
+    set potential_gain_y 0
 
   ]
   create-blueturtles round (0.5 * 20)
   [ set color blue
     setxy random-xcor random-ycor
-    set self-interest 0
-    set potential-gain-x 0
-    set potential-gain-y 0
+    set self_interest 0
+    set potential_gain_x 0
+    set potential_gain_y 0
   ]
-  let random-offset-x (17 - random 35)
-    let random-offset-y (17 - random 35)
-  ask patches [ 
-    set cost-function-x 100 - abs( pxcor - random-offset-x)  
-    set cost-function-y 100 - abs( pycor - random-offset-y)  
+
+  let random_offset_x random 17
+  let random_offset_y random 17
+
+  let random_offset_x_blue random 17
+  let random_offset_x_red random 17
+
+  ask patches [
+    set cost_function_x 100 - abs( pxcor - random_offset_x)
+    set cost_function_y 100 - abs( pycor - random_offset_y)
+
+    set cost_function_x_blue 100 - abs( pxcor - random_offset_x_blue)
+    set cost_function_x_red 100 - abs( pxcor - random_offset_x_red)
   ]
 
 end
 
-to go
+to go_task_1
   ask turtles [
     let empty-patches neighbors with [not any? turtles-here]
     if any? empty-patches
       [ let target one-of empty-patches
         face target
-        set potential-gain-x[cost-function-x] of target
-        set potential-gain-y[cost-function-y] of target
-        ifelse potential-gain-x > self-interest [
+        set potential_gain_x[cost_function_x] of target
+        set potential_gain_y[cost_function_y] of target
+        ifelse potential_gain_x > self_interest [
           move-to target
-          set self-interest potential-gain-x
+          set self_interest potential_gain_x
         ]
-        [ if potential-gain-y > self-interest [ 
+        [ if potential_gain_y > self_interest [
           move-to target
-          set self-interest potential-gain-y
+          set self_interest potential_gain_y
           ]
         ]
       ]
@@ -52,15 +60,47 @@ to go
   tick
 end
 
+to go_task_2
+  ask turtles
+    [
+    ifelse breed = redturtles[
+    let empty-patches neighbors with [not any? turtles-here]
+    if any? empty-patches
+      [ let target one-of empty-patches
+        face target
+        set potential_gain_x[cost_function_x_red] of target
+        if potential_gain_x > self_interest
+        [
+          move-to target
+          set self_interest potential_gain_x
+        ]
+       ]
+      ]
+   [
+    let empty-patches neighbors with [not any? turtles-here]
+    if any? empty-patches
+      [ let target one-of empty-patches
+        face target
+        set potential_gain_x[cost_function_x_blue] of target
+        if potential_gain_x > self_interest
+        [
+          move-to target
+          set self_interest potential_gain_x
+        ]
+       ]
+      ]
+     ]
+  tick
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+478
 10
-639
-439
+915
+448
 -1
 -1
-13
+13.0
 1
 10
 1
@@ -78,13 +118,13 @@ GRAPHICS-WINDOW
 0
 1
 ticks
-30
+30.0
 
 BUTTON
-12
-38
-200
-71
+16
+24
+137
+57
 setup
 setup\n
 NIL
@@ -98,12 +138,29 @@ NIL
 1
 
 BUTTON
-20
-90
-200
-120
+151
+24
+255
+57
 NIL
-go
+go_task_1\n
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+263
+25
+367
+58
+NIL
+go_task_1\n
 T
 1
 T
@@ -112,7 +169,25 @@ NIL
 NIL
 NIL
 NIL
-0
+1
+
+BUTTON
+31
+88
+135
+121
+NIL
+go_task_2\n
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -455,22 +530,22 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 default
-0
--0.2 0 0 1
-0 1 1 0
-0.2 0 0 1
+0.0
+-0.2 0 0.0 1.0
+0.0 1 1.0 0.0
+0.2 0 0.0 1.0
 link direction
 true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-
+0
 @#$#@#$#@
