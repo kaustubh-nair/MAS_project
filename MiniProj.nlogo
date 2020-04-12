@@ -22,11 +22,11 @@ to setup
     set potential_gain_y 0
   ]
 
-  let random_offset_x (max-pxcor - random (max-pxcor * 2 ))
-  let random_offset_y (max-pycor - random (max-pxcor * 2 ))
+  let random_offset_x max-pxcor - random 35
+  let random_offset_y max-pycor - random 35
 
-  let random_offset_blue (max-pxcor - random (max-pxcor * 2 ))
-  let random_offset_red (max-pxcor - random (max-pxcor * 2 ))
+  let random_offset_blue max-pxcor - random 35
+  let random_offset_red max-pxcor - random 35
 
   if random_offset_blue = random_offset_red
   [ set random_offset_blue round(random_offset_blue * 0.5)]
