@@ -1,7 +1,7 @@
 breed[redturtles redturtle]
 breed[blueturtles blueturtle]
-turtles-own [self_interest potential_gain_x potential_gain_y]
-patches-own [cost_function_x cost_function_y cost_function_blue cost_function_red]
+turtles-own [self_interest potential_gain_x potential_gain_y potential_gain_clustering]
+patches-own [cost_function_x cost_function_y cost_function_blue cost_function_red cost_function_clustering]
 
 to setup
   clear-all
@@ -12,6 +12,7 @@ to setup
     set self_interest 0
     set potential_gain_x 0
     set potential_gain_y 0
+    set potential_gain_clustering 0
 
   ]
   create-blueturtles round (0.5 * 20)
@@ -20,33 +21,37 @@ to setup
     set self_interest 0
     set potential_gain_x 0
     set potential_gain_y 0
+    set potential_gain_clustering 0
   ]
 
-  let random_offset_x max-pxcor - random 35
-  let random_offset_y max-pycor - random 35
+  let random_offset_x (max-pxcor - random (max-pxcor * 2 ))
+  let random_offset_y (max-pycor - random (max-pxcor * 2 ))
 
-  let random_offset_blue max-pxcor - random 35
-  let random_offset_red max-pxcor - random 35
+  let random_offset_blue (max-pxcor - random (max-pxcor * 2 ))
+  let random_offset_red (max-pxcor - random (max-pxcor * 2 ))
 
   if random_offset_blue = random_offset_red
   [ set random_offset_blue round(random_offset_blue * 0.5)]
 
 
   let choice random 2
+  let random_x random-pxcor
+  let random_y random-pxcor
 
   ask patches [
-    set cost_function_x 100 - abs( pxcor - random_offset_x)
-    set cost_function_y 100 - abs( pycor - random_offset_y)
+    set cost_function_x 1000 - abs( pxcor - random_offset_x)
+    set cost_function_y 1000 - abs( pycor - random_offset_y)
+    set cost_function_clustering 1000 - (distancexy random_x random_y)
 
 
     (ifelse
       choice = 0 [
-        set cost_function_blue 100 - abs( pxcor - random_offset_blue)
-        set cost_function_red 100 - abs( pxcor - random_offset_red)
+        set cost_function_blue 1000 - abs( pxcor - random_offset_blue)
+        set cost_function_red 1000 - abs( pxcor - random_offset_red)
       ]
       [
-        set cost_function_blue 100 - abs( pycor - random_offset_blue)
-        set cost_function_red 100 - abs( pycor - random_offset_red)
+        set cost_function_blue 1000 - abs( pycor - random_offset_blue)
+        set cost_function_red 1000 - abs( pycor - random_offset_red)
       ])
   ]
 
@@ -105,6 +110,22 @@ to go_task_2
       ]
      ]
   tick
+end
+to go_task_3
+  ask turtles [
+    let empty-patches neighbors with [not any? turtles-here]
+    if any? empty-patches
+      [ let target one-of empty-patches
+        face target
+        set potential_gain_clustering[cost_function_clustering] of target
+        if potential_gain_clustering > self_interest
+        [
+          move-to target
+          set self_interest potential_gain_clustering
+        ]
+       ]
+      
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -184,6 +205,23 @@ NIL
 NIL
 NIL
 1
+
+BUTTON
+95
+223
+275
+283
+go_task_3
+go_task_3
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+0
 @#$#@#$#@
 ## WHAT IS IT?
 
