@@ -1,6 +1,6 @@
 breed[redturtles redturtle]
 breed[blueturtles blueturtle]
-turtles-own [self_interest potential_gain_x potential_gain_y potential_gain_clustering]
+turtles-own [self_interest potential_gain_x potential_gain_y potential_gain_clustering potential_gain_grouping]
 patches-own [cost_function_x cost_function_y cost_function_blue cost_function_red cost_function_clustering]
 
 to setup
@@ -111,39 +111,117 @@ to go_task_2
      ]
   tick
 end
+
 to go_task_3
-  ask turtles [
+  ask redturtles [
     let empty-patches neighbors with [not any? turtles-here]
+    let redturtle-patches neighbors with [any? redturtles-here]
+    let blueturtle-patches neighbors with [any? blueturtles-here]
+    let potential_gain_samegroup 0
+    let potential_gain_diffgroup 0
+
+    if any? redturtle-patches
+    [
+      let redneighbors count turtles-on neighbors
+      set potential_gain_samegroup round((redneighbors * 10.0)/ 8.0)
+    ]
+
+    if any? blueturtle-patches
+    [
+      let blueneighbors count turtles-on neighbors
+      set potential_gain_diffgroup round((blueneighbors * 10.0)/ 8.0)
+    ]
+
+    set potential_gain_grouping (potential_gain_samegroup - potential_gain_diffgroup)
+
     if any? empty-patches
-      [ let target one-of empty-patches
-        face target
-        set potential_gain_clustering[cost_function_clustering] of target
-        if potential_gain_clustering > self_interest
+    [
+       let target one-of empty-patches
+       face target
+       set potential_gain_clustering[cost_function_clustering] of target
+
+      ifelse potential_gain_grouping >= 4
+      [
+       if ((0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)) > self_interest
+       [
+          move-to target
+          set self_interest (0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)
+       ]
+      ]
+      [
+        if (0.5 * potential_gain_clustering) > self_interest
         [
           move-to target
-          set self_interest potential_gain_clustering
+          set self_interest (0.5 * potential_gain_clustering)
         ]
+      ]
+
+    ]
+   ]
+
+  ask blueturtles [
+    let empty-patches neighbors with [not any? turtles-here]
+    let redturtle-patches neighbors with [any? redturtles-here]
+    let blueturtle-patches neighbors with [any? blueturtles-here]
+    let potential_gain_samegroup 0
+    let potential_gain_diffgroup 0
+
+    if any? redturtle-patches
+    [
+      let redneighbors count turtles-on neighbors
+      set potential_gain_diffgroup round((redneighbors * 10.0)/ 8.0)
+    ]
+
+    if any? blueturtle-patches
+    [
+      let blueneighbors count turtles-on neighbors
+      set potential_gain_samegroup round((blueneighbors * 10.0)/ 8.0)
+    ]
+
+    set potential_gain_grouping (potential_gain_samegroup - potential_gain_diffgroup)
+
+    if any? empty-patches
+    [
+       let target one-of empty-patches
+       face target
+       set potential_gain_clustering[cost_function_clustering] of target
+
+      ifelse potential_gain_grouping >= 4
+      [
+       if ((0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)) > self_interest
+       [
+          move-to target
+          set self_interest (0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)
        ]
-      
-  ]
+      ]
+      [
+        if (0.5 * potential_gain_clustering) > self_interest
+        [
+          move-to target
+          set self_interest (0.5 * potential_gain_clustering)
+        ]
+      ]
+
+    ]
+   ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 478
 10
-907
-439
+915
+448
 -1
 -1
-13
+13.0
 1
 10
 1
 1
 1
 0
-1
-1
+0
+0
 1
 -16
 16
@@ -153,7 +231,7 @@ GRAPHICS-WINDOW
 0
 1
 ticks
-30
+30.0
 
 BUTTON
 16
@@ -173,10 +251,27 @@ NIL
 1
 
 BUTTON
-25
-80
-129
-113
+144
+24
+248
+57
+NIL
+go_task_1\n
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+257
+24
+361
+57
 NIL
 go_task_1\n
 T
@@ -190,10 +285,10 @@ NIL
 1
 
 BUTTON
-30
-135
-134
-168
+17
+69
+121
+102
 NIL
 go_task_2\n
 T
@@ -207,11 +302,11 @@ NIL
 1
 
 BUTTON
-95
-223
-275
-283
-go_task_3
+133
+70
+252
+103
+NIL
 go_task_3
 T
 1
@@ -221,7 +316,8 @@ NIL
 NIL
 NIL
 NIL
-0
+1
+
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -564,22 +660,22 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.0
+NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 default
-0
--0.2 0 0 1
-0 1 1 0
-0.2 0 0 1
+0.0
+-0.2 0 0.0 1.0
+0.0 1 1.0 0.0
+0.2 0 0.0 1.0
 link direction
 true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-
+0
 @#$#@#$#@
