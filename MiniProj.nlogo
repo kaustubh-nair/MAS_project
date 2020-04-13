@@ -35,8 +35,8 @@ to setup
 
 
   let choice random 2
-  let random_x random-pxcor
-  let random_y random-pxcor
+  let random_x (max-pxcor - 5 - random ((max-pxcor * 2) - 7 ))
+let random_y (max-pycor - 5 - random ((max-pxcor * 2) - 7 ))
 
   ask patches [
     set cost_function_x 1000 - abs( pxcor - random_offset_x)
