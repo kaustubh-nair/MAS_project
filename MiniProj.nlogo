@@ -39,6 +39,7 @@ to setup
   let random_y random-pxcor
 
   ask patches [
+    set pcolor random 2
     set cost_function_x 1000 - abs( pxcor - random_offset_x)
     set cost_function_y 1000 - abs( pycor - random_offset_y)
     set cost_function_clustering 1000 - (distancexy random_x random_y)
@@ -142,12 +143,12 @@ to go_task_3
        set potential_gain_clustering[cost_function_clustering] of target
        show potential_gain_clustering
 
-      ifelse potential_gain_grouping >= 1250
+      ifelse potential_gain_grouping >= 3750
       [
-       if ((0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)) > self_interest
+       if ((0.6 * potential_gain_grouping) + (0.4 * potential_gain_clustering)) > self_interest
        [
           move-to target
-          set self_interest (0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)
+          set self_interest (0.6 * potential_gain_grouping) + (0.4 * potential_gain_clustering)
        ]
       ]
       [
@@ -188,12 +189,12 @@ to go_task_3
        face target
        set potential_gain_clustering[cost_function_clustering] of target
 
-      ifelse potential_gain_grouping >= 1250
+      ifelse potential_gain_grouping >= 3750
       [
-       if ((0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)) > self_interest
+       if ((0.6 * potential_gain_grouping) + (0.4 * potential_gain_clustering)) > self_interest
        [
           move-to target
-          set self_interest (0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)
+          set self_interest (0.6 * potential_gain_grouping) + (0.4 * potential_gain_clustering)
        ]
       ]
       [
