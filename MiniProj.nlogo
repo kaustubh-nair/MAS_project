@@ -123,24 +123,26 @@ to go_task_3
     if any? redturtle-patches
     [
       let redneighbors count turtles-on neighbors
-      set potential_gain_samegroup round((redneighbors * 10.0)/ 8.0)
+      set potential_gain_samegroup round((redneighbors * 10000.0)/ 8.0)
     ]
 
     if any? blueturtle-patches
     [
       let blueneighbors count turtles-on neighbors
-      set potential_gain_diffgroup round((blueneighbors * 10.0)/ 8.0)
+      set potential_gain_diffgroup round((blueneighbors * 10000.0)/ 8.0)
     ]
 
     set potential_gain_grouping (potential_gain_samegroup - potential_gain_diffgroup)
+    show potential_gain_grouping
 
     if any? empty-patches
     [
        let target one-of empty-patches
        face target
        set potential_gain_clustering[cost_function_clustering] of target
+       show potential_gain_clustering
 
-      ifelse potential_gain_grouping >= 4
+      ifelse potential_gain_grouping >= 1250
       [
        if ((0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)) > self_interest
        [
@@ -169,13 +171,13 @@ to go_task_3
     if any? redturtle-patches
     [
       let redneighbors count turtles-on neighbors
-      set potential_gain_diffgroup round((redneighbors * 10.0)/ 8.0)
+      set potential_gain_diffgroup round((redneighbors * 10000.0)/ 8.0)
     ]
 
     if any? blueturtle-patches
     [
       let blueneighbors count turtles-on neighbors
-      set potential_gain_samegroup round((blueneighbors * 10.0)/ 8.0)
+      set potential_gain_samegroup round((blueneighbors * 10000.0)/ 8.0)
     ]
 
     set potential_gain_grouping (potential_gain_samegroup - potential_gain_diffgroup)
@@ -186,7 +188,7 @@ to go_task_3
        face target
        set potential_gain_clustering[cost_function_clustering] of target
 
-      ifelse potential_gain_grouping >= 4
+      ifelse potential_gain_grouping >= 1250
       [
        if ((0.8 * potential_gain_grouping) + (0.2 * potential_gain_clustering)) > self_interest
        [
