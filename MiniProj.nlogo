@@ -39,7 +39,7 @@ to setup
   let random_y random-pxcor
 
   ask patches [
-    set pcolor random 2
+    ;set pcolor random 2
     set cost_function_x 1000 - abs( pxcor - random_offset_x)
     set cost_function_y 1000 - abs( pycor - random_offset_y)
     set cost_function_clustering 1000 - (distancexy random_x random_y)
