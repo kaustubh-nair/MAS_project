@@ -39,7 +39,7 @@ to setup
 let random_y (max-pycor - 5 - random ((max-pxcor * 2) - 7 ))
 
   ask patches [
-    set pcolor random 2
+
     set cost_function_x 1000 - abs( pxcor - random_offset_x)
     set cost_function_y 1000 - abs( pycor - random_offset_y)
     set cost_function_clustering 1000 - (distancexy random_x random_y)
@@ -59,6 +59,7 @@ let random_y (max-pycor - 5 - random ((max-pxcor * 2) - 7 ))
 end
 
 to go_task_1
+  resize-world -50 50 -50 50
   ask turtles [
     let empty-patches neighbors with [not any? turtles-here]
     if any? empty-patches
@@ -81,6 +82,7 @@ to go_task_1
 end
 
 to go_task_2
+  resize-world -50 50 -50 50
   ask turtles
     [
     ifelse breed = redturtles[
@@ -114,6 +116,7 @@ to go_task_2
 end
 
 to go_task_3
+  resize-world -50 50 -50 50
   ask redturtles [
     let empty-patches neighbors with [not any? turtles-here]
     let redturtle-patches neighbors with [any? redturtles-here]
@@ -212,8 +215,8 @@ end
 GRAPHICS-WINDOW
 478
 10
-915
-448
+1799
+1332
 -1
 -1
 13.0
@@ -226,10 +229,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--16
-16
--16
-16
+-50
+50
+-50
+50
 0
 0
 1
@@ -254,27 +257,10 @@ NIL
 1
 
 BUTTON
-144
-24
-248
-57
-NIL
-go_task_1\n
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-257
-24
-361
-57
+18
+72
+122
+105
 NIL
 go_task_1\n
 T
@@ -288,10 +274,10 @@ NIL
 1
 
 BUTTON
-17
-69
-121
-102
+20
+118
+124
+151
 NIL
 go_task_2\n
 T
@@ -305,10 +291,10 @@ NIL
 1
 
 BUTTON
-133
-70
-252
-103
+20
+164
+139
+197
 NIL
 go_task_3
 T
