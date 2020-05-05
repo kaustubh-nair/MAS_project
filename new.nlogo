@@ -1,7 +1,7 @@
 breed[redturtles redturtle]
 breed[blueturtles blueturtle]
-turtles-own [self_interest potential_gain potential_gain_clustering potential_gain_grouping]
-patches-own [cost_function_x cost_function_y cost_function_blue cost_function_red cost_function_clustering]
+patches-own[payoff]
+turtles-own[top-connected bottom-connected left-connected right-connected]
 
 to setup
   clear-all
@@ -9,229 +9,62 @@ to setup
   create-redturtles round (0.5 * 20)
   [ set color red
     setxy random-xcor random-ycor
-    set self_interest 0
-    set potential_gain 0
-    set potential_gain_clustering 0
-
+    set heading 45 * (random 8)
   ]
   create-blueturtles round (0.5 * 20)
   [ set color blue
     setxy random-xcor random-ycor
-    set self_interest 0
-    set potential_gain 0
-    set potential_gain_clustering 0
+    set heading 45 * (random 8)
   ]
-
-  let random_offset_x (max-pxcor - random (max-pxcor * 2 ))
-  let random_offset_y (max-pycor - random (max-pxcor * 2 ))
-
-  let random_offset_blue (max-pxcor - random (max-pxcor * 2 ))
-  let random_offset_red (max-pxcor - random (max-pxcor * 2 ))
-
-  if random_offset_blue = random_offset_red
-  [ set random_offset_blue round(random_offset_blue * 0.5)]
-
-
-  let choice random 2
-  let random_x (max-pxcor - 5 - random ((max-pxcor * 2) - 7 ))
-let random_y (max-pycor - 5 - random ((max-pxcor * 2) - 7 ))
-
-  ask patches [
-    ;set pcolor random 2
-
-    set cost_function_x 1000 - abs( pxcor - random_offset_x)
-    set cost_function_y 1000 - abs( pycor - random_offset_y)
-    set cost_function_clustering 1000 - (distancexy random_x random_y)
-
-
-    (ifelse
-      choice = 0 [
-        set cost_function_blue 1000 - abs( pxcor - random_offset_blue)
-        set cost_function_red 1000 - abs( pxcor - random_offset_red)
-      ]
-      [
-        set cost_function_blue 1000 - abs( pycor - random_offset_blue)
-        set cost_function_red 1000 - abs( pycor - random_offset_red)
-      ])
-  ]
-
 end
 
 to go_task_1
-  resize-world -50 50 -50 50
   ask turtles [
-    let empty-patches neighbors with [not any? turtles-here]
-    if any? empty-patches
-      [ let target one-of empty-patches
-        face target
-        let gain_x[cost_function_x] of target
-        let gain_y[cost_function_y] of target
-        set potential_gain max list gain_x gain_y
-        if potential_gain > self_interest [
-          move-to target
-          set self_interest potential_gain
-        ]
-
-      ]
+    let target-patch find-best-payoff-patch
+    move-to target-patch
   ]
   tick
 end
 
-to go_task_2
-  resize-world -50 50 -50 50
-  ask turtles
-    [
-    ifelse breed = redturtles[
-    let empty-patches neighbors with [not any? turtles-here]
-    if any? empty-patches
-      [ let target one-of empty-patches
-        face target
-        set potential_gain[cost_function_red] of target
-        if potential_gain > self_interest
-        [
-          move-to target
-          set self_interest potential_gain
-        ]
-       ]
-      ]
-   [
-    let empty-patches neighbors with [not any? turtles-here]
-    if any? empty-patches
-      [ let target one-of empty-patches
-        face target
-        set potential_gain[cost_function_blue] of target
-        if potential_gain > self_interest
-        [
-          move-to target
-          set self_interest potential_gain
-        ]
-       ]
-      ]
-     ]
-  tick
+to-report find-best-payoff-patch
+  let neighboring-patches neighbors
+  ask neighboring-patches [ set payoff 0 ]
+  ask neighboring-patches 
+  [
+    if any? turtles-here
+    [set payoff (payoff + 1)]
+  ]
+  
+  report max-one-of neighboring-patches [payoff]
 end
 
-to go_task_3
-  resize-world -50 50 -50 50
-  ask redturtles [
-    let empty-patches neighbors with [not any? turtles-here]
-    let redturtle-patches neighbors with [any? redturtles-here]
-    let blueturtle-patches neighbors with [any? blueturtles-here]
-    let potential_gain_samegroup 0
-    let potential_gain_diffgroup 0
-
-    if any? redturtle-patches
-    [
-      let redneighbors count turtles-on neighbors
-      set potential_gain_samegroup round((redneighbors * 10000.0)/ 8.0)
-    ]
-
-    if any? blueturtle-patches
-    [
-      let blueneighbors count turtles-on neighbors
-      set potential_gain_diffgroup round((blueneighbors * 10000.0)/ 8.0)
-    ]
-
-    set potential_gain_grouping (potential_gain_samegroup - potential_gain_diffgroup)
-
-    if any? empty-patches
-    [
-       let target one-of empty-patches
-       face target
-       set potential_gain_clustering[cost_function_clustering] of target
-
-      ifelse potential_gain_grouping >= 3750
-      [
-       if ((0.6 * potential_gain_grouping) + (0.4 * potential_gain_clustering)) > self_interest
-       [
-          move-to target
-          set self_interest (0.6 * potential_gain_grouping) + (0.4 * potential_gain_clustering)
-       ]
-      ]
-      [
-        if (0.5 * potential_gain_clustering) > self_interest
-        [
-          move-to target
-          set self_interest (0.5 * potential_gain_clustering)
-        ]
-      ]
-
-    ]
-   ]
-
-  ask blueturtles [
-    let empty-patches neighbors with [not any? turtles-here]
-    let redturtle-patches neighbors with [any? redturtles-here]
-    let blueturtle-patches neighbors with [any? blueturtles-here]
-    let potential_gain_samegroup 0
-    let potential_gain_diffgroup 0
-
-    if any? redturtle-patches
-    [
-      let redneighbors count turtles-on neighbors
-      set potential_gain_diffgroup round((redneighbors * 10000.0)/ 8.0)
-    ]
-
-    if any? blueturtle-patches
-    [
-      let blueneighbors count turtles-on neighbors
-      set potential_gain_samegroup round((blueneighbors * 10000.0)/ 8.0)
-    ]
-
-    set potential_gain_grouping (potential_gain_samegroup - potential_gain_diffgroup)
-
-    if any? empty-patches
-    [
-       let target one-of empty-patches
-       face target
-       set potential_gain_clustering[cost_function_clustering] of target
-
-      ifelse potential_gain_grouping >= 3750
-      [
-       if ((0.6 * potential_gain_grouping) + (0.4 * potential_gain_clustering)) > self_interest
-       [
-          move-to target
-          set self_interest (0.6 * potential_gain_grouping) + (0.4 * potential_gain_clustering)
-       ]
-      ]
-      [
-        if (0.5 * potential_gain_clustering) > self_interest
-        [
-          move-to target
-          set self_interest (0.5 * potential_gain_clustering)
-        ]
-      ]
-
-    ]
-   ]
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 478
 10
-1799
-1332
+907
+439
 -1
 -1
-13.0
+13
 1
 10
 1
 1
 1
 0
-0
-0
 1
--50
-50
--50
-50
+1
+1
+-16
+16
+-16
+16
 0
 0
 1
 ticks
-30.0
+30
 
 BUTTON
 16
@@ -251,10 +84,10 @@ NIL
 1
 
 BUTTON
-18
-72
-122
-105
+25
+80
+129
+113
 NIL
 go_task_1\n
 T
@@ -268,10 +101,10 @@ NIL
 1
 
 BUTTON
-20
-118
-124
-151
+30
+135
+134
+168
 NIL
 go_task_2\n
 T
@@ -285,11 +118,11 @@ NIL
 1
 
 BUTTON
-20
-164
-139
-197
-NIL
+95
+223
+275
+283
+go_task_3
 go_task_3
 T
 1
@@ -299,8 +132,7 @@ NIL
 NIL
 NIL
 NIL
-1
-
+0
 @#$#@#$#@
 ## WHAT IS IT?
 
@@ -643,22 +475,22 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.1
+NetLogo 6.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 default
-0.0
--0.2 0 0.0 1.0
-0.0 1 1.0 0.0
-0.2 0 0.0 1.0
+0
+-0.2 0 0 1
+0 1 1 0
+0.2 0 0 1
 link direction
 true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+
 @#$#@#$#@
