@@ -1,6 +1,6 @@
 breed[redturtles redturtle]
 breed[blueturtles blueturtle]
-turtles-own [self_interest potential_gain_x potential_gain_y potential_gain_clustering potential_gain_grouping]
+turtles-own [self_interest potential_gain potential_gain_clustering potential_gain_grouping]
 patches-own [cost_function_x cost_function_y cost_function_blue cost_function_red cost_function_clustering]
 
 to setup
@@ -10,8 +10,7 @@ to setup
   [ set color red
     setxy random-xcor random-ycor
     set self_interest 0
-    set potential_gain_x 0
-    set potential_gain_y 0
+    set potential_gain 0
     set potential_gain_clustering 0
 
   ]
@@ -19,8 +18,7 @@ to setup
   [ set color blue
     setxy random-xcor random-ycor
     set self_interest 0
-    set potential_gain_x 0
-    set potential_gain_y 0
+    set potential_gain 0
     set potential_gain_clustering 0
   ]
 
@@ -65,17 +63,14 @@ to go_task_1
     if any? empty-patches
       [ let target one-of empty-patches
         face target
-        set potential_gain_x[cost_function_x] of target
-        set potential_gain_y[cost_function_y] of target
-        ifelse potential_gain_x > self_interest [
+        let gain_x[cost_function_x] of target
+        let gain_y[cost_function_y] of target
+        set potential_gain max list gain_x gain_y
+        if potential_gain > self_interest [
           move-to target
-          set self_interest potential_gain_x
+          set self_interest potential_gain
         ]
-        [ if potential_gain_y > self_interest [
-          move-to target
-          set self_interest potential_gain_y
-          ]
-        ]
+
       ]
   ]
   tick
@@ -90,11 +85,11 @@ to go_task_2
     if any? empty-patches
       [ let target one-of empty-patches
         face target
-        set potential_gain_x[cost_function_red] of target
-        if potential_gain_x > self_interest
+        set potential_gain[cost_function_red] of target
+        if potential_gain > self_interest
         [
           move-to target
-          set self_interest potential_gain_x
+          set self_interest potential_gain
         ]
        ]
       ]
@@ -103,11 +98,11 @@ to go_task_2
     if any? empty-patches
       [ let target one-of empty-patches
         face target
-        set potential_gain_x[cost_function_blue] of target
-        if potential_gain_x > self_interest
+        set potential_gain[cost_function_blue] of target
+        if potential_gain > self_interest
         [
           move-to target
-          set self_interest potential_gain_x
+          set self_interest potential_gain
         ]
        ]
       ]
@@ -137,14 +132,12 @@ to go_task_3
     ]
 
     set potential_gain_grouping (potential_gain_samegroup - potential_gain_diffgroup)
-    show potential_gain_grouping
 
     if any? empty-patches
     [
        let target one-of empty-patches
        face target
        set potential_gain_clustering[cost_function_clustering] of target
-       show potential_gain_clustering
 
       ifelse potential_gain_grouping >= 3750
       [
